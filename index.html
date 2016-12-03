@@ -521,43 +521,14 @@ MathJax.Hub.Config({
 
       
         
-          
-            <h2 id="一个字符串带通配符的字符串匹配"><a href="#一个字符串带通配符的字符串匹配" class="headerlink" title="一个字符串带通配符的字符串匹配"></a>一个字符串带通配符的字符串匹配</h2><p>请看题（NOI OJ 6252） <a href="http://noi.openjudge.cn/ch0206/6252/" target="_blank" rel="external">http://noi.openjudge.cn/ch0206/6252/</a></p>
-<p>题目大意就是，带通配符的字符串$A$和普通的字符串$B$长度都满足$al\le 20, bl\le 20$，$A$中可能有星号$*$可以匹配0个或多个任意字符，还可能有问号$?$可以匹配正好一个字符，问$B$是否能匹配字符串$A$。</p>
-<p>这道题我刚拿到时是一脸懵逼的。不过研究题目后，我注意到了题目的特点：</p>
-<ol>
-<li>问题可以分割为有意义的子问题。就是说，如果把字符串$A​$的前几个字符组成的子串$m​$，和$B​$中前几个字符组成的子串$n​$，把$m​$和$n​$单独挑出来替换题中的$A​$和$B​$，这个问题依然有意义。</li>
-<li>问题没有后效性。就是说子串$m$和$n$是否有解，与$A$和$B$后半部分的字符无关。</li>
-</ol>
-<p>思索再三<del>看到了题目的分类是动态规划</del>，我最后选择了动态规划来求解。</p>
-<p>对于字符串$A$的第$i$个字符，有可能是星号、问号或者其它普通的字符。星号是最好处理的——末尾的星号意味着我们可以无视子串$n$剩下的部分。所以说如果有已经确认匹配的$m$和$n$字符串，在$m$后面加上一个星号形成$m’$，在$n$后面加上任意长度的任意字符串或者不加字符串形成$n’$，必有$m’$和$n’$依然匹配。</p>
-<p>除了星号，问号和普通字符都只可以匹配1个字符，所以把他们放在一起考虑。普通字符的匹配规则是很显然的，如果两个字符相同那就匹配，那么对于已经确认匹配的字符串$m$和$n$，我们在$m$和$n$后面分别加上一个相同的字符，使他们成为$m’$和$n’$，那么$m’$和$n’$依然匹配。问号可以匹配任意的一个字符，那么将$m$加上一个问号变成$m’$，$n$加上任意的一个字符成为$n’$，一定有$m’$和$n’$匹配。</p>
-<p>综上所述，对于任意已经确认匹配的字符串$m$和$n$，必定有以下匹配法则：</p>
-<ol>
-<li>$m$加一个星号，必定和$n$加上任意字符或不加字符匹配</li>
-<li>$m$加一个问号，必定和$n$加上任意一个字符匹配</li>
-<li>$m$加一个普通字符，必定和$n$加上相同的普通字符匹配</li>
-</ol>
-<p>这时候我们就可以定义状态。如果把$A$的前$i$项字符组成的串记为$m$，把$B$的前$j$项组成的串记为$n$，那么就可以定义布尔数组$dp[i][j]$记为$m$和$n$是否匹配。根据上面的匹配法则，可以得出这样的递推法则：</p>
-<ol>
-<li>如果<code>A[i]</code>是星号，只要${dp[i-1][k], 1\le k\le bl}$中有一个为真，那么$dp[i][j]$为真</li>
-<li>如果<code>A[i]</code>是问号，而且$dp[i-1][j-1]$为真，那么$dp[i][j]$为真</li>
-<li>如果<code>A[i]</code>是普通字符，而且$dp[i-1][j-1]$为真，而且<code>A[i]</code>和<code>B[j]</code>相同，那么$dp[i][j]$为真</li>
-</ol>
-<p>对于动态规划问题，我们还需要考虑边界条件。如果A、B是两个由一个相同普通字符组成的字符串，即$i=j=1$且 <code>A[i]=B[j]</code> ，显然$dp[1][1]$为真，按照递推法则3，必须要先有$dp[0][0]$为真——两个空的字符串我们不能认为他们不匹配。如果$A$只包含一个星号，即$i=1$且<code>A[1]</code>为星号，虽然我们得到了递推法则1，但我们似乎不能用赋初值的方法让$dp[0][k]$全部符合——那就特判一下吧。</p>
-<p>这道题还有个坑的地方——字符串A和B可以包含空格！我一开始没有发现，然后用cin读入，自信满满的提交了代码以为能AC，结果WA了两组点，修改了用gets读入才得到AC。另外，这题数据范围不大，如果长度大还能用滚动数组优化空间复杂度，这里就不讲了。</p>
-<p>AC代码是这样的：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">#include &lt;cstdio&gt;</div><div class="line">#include &lt;iostream&gt;</div><div class="line">#include &lt;cstring&gt;</div><div class="line">using namespace std;</div><div class="line">#define FOR(x,f,t) for(x=f;x&lt;=t;++x) </div><div class="line">#define M 25</div><div class="line">char A[M], B[M];</div><div class="line">bool dp[M][M];</div><div class="line">int al,bl,i,j,k;</div><div class="line">int main () &#123; </div><div class="line">	gets(A+1), gets(B+1); //读入有空格！</div><div class="line">	al=strlen(A+1), bl=strlen(B+1);</div><div class="line">	dp[0][0]=1; //赋初值，上文有提到</div><div class="line">	if(A[1]=='*') FOR(j,0,bl) dp[1][j]=1; //特判，一个星号能匹配所有的字符串</div><div class="line">	FOR(i,1,al) &#123;</div><div class="line">		if(A[i]=='*') FOR(j,1,bl) FOR(k,1,bl) dp[i][j]|=dp[i-1][k];</div><div class="line">		else FOR(j,1,bl) dp[i][j]=(dp[i-1][j-1]&amp;&amp;(A[i]==B[j]||A[i]=='?')); //这里把普通字符和问号合并了</div><div class="line">	&#125;</div><div class="line">	if(dp[al][bl]) cout&lt;&lt;"matched";</div><div class="line">	else cout&lt;&lt;"not matched";</div><div class="line">	return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>其实这个问题还有个升级版——</p>
-<h2 id="两个字符串都带通配符的字符串匹配"><a href="#两个字符串都带通配符的字符串匹配" class="headerlink" title="两个字符串都带通配符的字符串匹配"></a>两个字符串都带通配符的字符串匹配</h2><p>不要给这标题吓到了。有了解决了一个字符串的通配符问题的经验，两个字符串都含通配符的匹配问题不是很难想。</p>
-<p>当第二个字符串也出现通配符的时候，我们经过推敲，欣喜的发现的法则都没有变化——意味着我们的核心算法不需要做大的改动。唯一需要注意的是赋予初值时的小变化——赋予初值的时候注意把$A$和$B$都判断一次，判断星号问号的时候把$A$和$B$同时判断即可。</p>
-<p>我们只需要对原来的代码做一些小更改，就能得到解决两个字符串都带通配符的匹配问题的代码：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">#include &lt;cstdio&gt;</div><div class="line">#include &lt;iostream&gt;</div><div class="line">#include &lt;cstring&gt;</div><div class="line">using namespace std;</div><div class="line">#define FOR(x,f,t) for(x=f;x&lt;=t;++x) </div><div class="line">#define M 25</div><div class="line">char A[M], B[M];</div><div class="line">bool dp[M][M];</div><div class="line">int al,bl;</div><div class="line">int main () &#123; </div><div class="line">	gets(A+1), gets(B+1);</div><div class="line">	al=strlen(A+1), bl=strlen(B+1);</div><div class="line">	int i,j,k;</div><div class="line">	dp[0][0]=1;</div><div class="line">	if(A[1]=='*') FOR(j,0,bl) dp[1][j]=1;</div><div class="line">	if(B[1]=='*') FOR(i,0,al) dp[i][1]=1; //同时赋初值</div><div class="line">	FOR(i,1,al) &#123; //这里从A的长度作为第一维，其实从A和B都是一样的</div><div class="line">		if(A[i]=='*'||B[i]=='*') FOR(j,1,bl) FOR(k,1,bl) dp[i][j]|=dp[i-1][k]; //同时判断星号</div><div class="line">		else FOR(j,1,bl) dp[i][j]=(dp[i-1][j-1]&amp;&amp;(A[i]==B[j]||A[i]=='?'||B[i]=='?')); //同时判断问号</div><div class="line">	&#125;</div><div class="line">	if(dp[al][bl]) cout&lt;&lt;"matched";</div><div class="line">	else cout&lt;&lt;"not matched";</div><div class="line">	return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>字符串匹配问题的应用非常广。我们在生产开发过程中常常有各种各样的字符串匹配和替换需求，这时候就可以用到<strong>正则表达式</strong>(regexp或regex)，这是一个比上面两个字符串匹配算法还要强大的引擎，许多编程语言都支持它，许多文本编辑器也使用它来完成查找替换。正则表达式辉煌的背后需要解决许多类似这样的字符串匹配问题，有兴趣的朋友们可以去百毒或者谷割了解一下。</p>
-<p>最后感谢 <strong><a href="http://kyleyoung-ymj.github.io/" target="_blank" rel="external">KyleYoung神犇</a></strong> 的指导 :)</p>
-<p>by lmlstarqaq</p>
-
-          
+          <p>对于带通配符的字符串$A$和普通的字符串$B$，$A$中可能有星号$*$可以匹配0个或多个任意字符，还可能有问号$?$可以匹配正好一个字符，问$B$是否能匹配字符串$A$。<br>诸如此类的问题叫做字符串匹配问题，由它的解决方案扩展而成的正则表达式在生产开发中具有重要的意义。<br>这篇文章中，我们从NOI OJ 6252这道题引入，探讨解决这类问题的方法。<br>
+          <!--noindex-->
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/11/09/noi-oj-6252-string-match/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>

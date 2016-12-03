@@ -92,22 +92,16 @@ MathJax.Hub.Config({
 
 
 
-<meta name="description" content="一个字符串带通配符的字符串匹配请看题（NOI OJ 6252） http://noi.openjudge.cn/ch0206/6252/
-题目大意就是，带通配符的字符串$A$和普通的字符串$B$长度都满足$al\le 20, bl\le 20$，$A$中可能有星号$*$可以匹配0个或多个任意字符，还可能有问号$?$可以匹配正好一个字符，问$B$是否能匹配字符串$A$。
-这道题我刚拿到时是一脸懵逼的">
+<meta name="description" content="对于带通配符的字符串$A$和普通的字符串$B$，$A$中可能有星号$*$可以匹配0个或多个任意字符，还可能有问号$?$可以匹配正好一个字符，问$B$是否能匹配字符串$A$。诸如此类的问题叫做字符串匹配问题，由它的解决方案扩展而成的正则表达式在生产开发中具有重要的意义。这篇文章中，我们从NOI OJ 6252这道题引入，探讨解决这类问题的方法。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="字符串匹配系列问题 & NOI OJ 6252 带通配符的字符串匹配 题解">
 <meta property="og:url" content="http://snake1999.com/2016/11/09/noi-oj-6252-string-match/index.html">
 <meta property="og:site_name" content="Lin Mulan">
-<meta property="og:description" content="一个字符串带通配符的字符串匹配请看题（NOI OJ 6252） http://noi.openjudge.cn/ch0206/6252/
-题目大意就是，带通配符的字符串$A$和普通的字符串$B$长度都满足$al\le 20, bl\le 20$，$A$中可能有星号$*$可以匹配0个或多个任意字符，还可能有问号$?$可以匹配正好一个字符，问$B$是否能匹配字符串$A$。
-这道题我刚拿到时是一脸懵逼的">
-<meta property="og:updated_time" content="2016-12-03T00:49:23.859Z">
+<meta property="og:description" content="对于带通配符的字符串$A$和普通的字符串$B$，$A$中可能有星号$*$可以匹配0个或多个任意字符，还可能有问号$?$可以匹配正好一个字符，问$B$是否能匹配字符串$A$。诸如此类的问题叫做字符串匹配问题，由它的解决方案扩展而成的正则表达式在生产开发中具有重要的意义。这篇文章中，我们从NOI OJ 6252这道题引入，探讨解决这类问题的方法。">
+<meta property="og:updated_time" content="2016-12-03T01:12:06.680Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="字符串匹配系列问题 & NOI OJ 6252 带通配符的字符串匹配 题解">
-<meta name="twitter:description" content="一个字符串带通配符的字符串匹配请看题（NOI OJ 6252） http://noi.openjudge.cn/ch0206/6252/
-题目大意就是，带通配符的字符串$A$和普通的字符串$B$长度都满足$al\le 20, bl\le 20$，$A$中可能有星号$*$可以匹配0个或多个任意字符，还可能有问号$?$可以匹配正好一个字符，问$B$是否能匹配字符串$A$。
-这道题我刚拿到时是一脸懵逼的">
+<meta name="twitter:description" content="对于带通配符的字符串$A$和普通的字符串$B$，$A$中可能有星号$*$可以匹配0个或多个任意字符，还可能有问号$?$可以匹配正好一个字符，问$B$是否能匹配字符串$A$。诸如此类的问题叫做字符串匹配问题，由它的解决方案扩展而成的正则表达式在生产开发中具有重要的意义。这篇文章中，我们从NOI OJ 6252这道题引入，探讨解决这类问题的方法。">
 
 
 
@@ -370,7 +364,8 @@ MathJax.Hub.Config({
       
 
       
-        <h2 id="一个字符串带通配符的字符串匹配"><a href="#一个字符串带通配符的字符串匹配" class="headerlink" title="一个字符串带通配符的字符串匹配"></a>一个字符串带通配符的字符串匹配</h2><p>请看题（NOI OJ 6252） <a href="http://noi.openjudge.cn/ch0206/6252/" target="_blank" rel="external">http://noi.openjudge.cn/ch0206/6252/</a></p>
+        <p>对于带通配符的字符串$A$和普通的字符串$B$，$A$中可能有星号$*$可以匹配0个或多个任意字符，还可能有问号$?$可以匹配正好一个字符，问$B$是否能匹配字符串$A$。<br>诸如此类的问题叫做字符串匹配问题，由它的解决方案扩展而成的正则表达式在生产开发中具有重要的意义。<br>这篇文章中，我们从NOI OJ 6252这道题引入，探讨解决这类问题的方法。<br><a id="more"></a></p>
+<h2 id="一个字符串带通配符的字符串匹配"><a href="#一个字符串带通配符的字符串匹配" class="headerlink" title="一个字符串带通配符的字符串匹配"></a>一个字符串带通配符的字符串匹配</h2><p>请看题（NOI OJ 6252） <a href="http://noi.openjudge.cn/ch0206/6252/" target="_blank" rel="external">http://noi.openjudge.cn/ch0206/6252/</a></p>
 <p>题目大意就是，带通配符的字符串$A$和普通的字符串$B$长度都满足$al\le 20, bl\le 20$，$A$中可能有星号$*$可以匹配0个或多个任意字符，还可能有问号$?$可以匹配正好一个字符，问$B$是否能匹配字符串$A$。</p>
 <p>这道题我刚拿到时是一脸懵逼的。不过研究题目后，我注意到了题目的特点：</p>
 <ol>
